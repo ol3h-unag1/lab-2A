@@ -9,6 +9,9 @@
 #include <sstream>
 
 #include <cctype>
+#include <cassert>
+
+#include <stdexcept>
 
 // load words: read file (user inputs file name) or make user to type new word (user inputs word manually)
 //      check if new words are already in the library, if new words are in library check their Hard-To-Remember-Rating (HRR, or Rating)
@@ -78,10 +81,57 @@ void ReadLibrary( std::vector< RatingType >& ratings, std::vector< WordType >& w
             words.clear();
             return;
         }
-        while( word.size() && std::isspace( word.back() ) )
 
-        std::cout << "Read line #" << ratings.size() << ": " << rating << " " << word << std::endl;
+        while( word.size() && std::isspace( word.back() ) );
+
+        //std::cout << "Read line #" << ratings.size() << ": " << rating << " " << word << std::endl;
     }
+}
+
+enum class E_MENU_ITEM
+{
+    INVALID = 1,
+    TRAIN = 0,
+    ADD = 1
+};
+
+E_MENU_ITEM PromptUserInput()
+{
+    E_MENU_ITEM menuItem = E_MENU_ITEM::INVALID;
+
+    try {
+        while( true )
+        {
+            std::cout << "Hi! You wanna train memory or add new word(s)? Please enter a number to make a choice:" << std::endl;
+            std::cout << "1 - for training\n"
+                "2 - for adding new word(s)" << std::endl;
+
+            std::string choice;
+            std::getline( std::cin, choice );
+
+            if( choice.empty() ||
+                choice.size() > 1 ||
+                std::isdigit( choice[ 0 ] ) == false ||
+                std::stoi( choice ) < 0 ||
+                std::stoi( choice ) > 1 )
+            {
+                continue;
+            }
+
+            menuItem = static_cast< E_MENU_ITEM >( std::stoi( choice ) );
+            break;
+        }
+    }
+    catch( std::invalid_argument& e )
+    {
+        std::cout << e.what() << std::endl;
+    }
+    catch( ... )
+    {
+        std::cout << "Unhandled exeception!" << std::endl;
+    }
+
+    return menuItem;
 }
 
 int main()
@@ -90,11 +140,14 @@ int main()
     std::vector< WordType > libraryWords;
     ReadLibrary( libraryRatings, libraryWords );
 
+    assert( ( "ratings and words collections have different sizes" ), libraryRatings.size() == libraryWords.size() );
     if( libraryRatings.empty() || libraryWords.empty() || ( libraryRatings.size() != libraryWords.size() ) )
     {
         std::cout << "Exiting app..." << std::endl;
         return 1;
     }
+
+    E_MENU_ITEM menuItem = PromptUserInput();         
 
     libraryRatings.clear();
     libraryWords.clear();
