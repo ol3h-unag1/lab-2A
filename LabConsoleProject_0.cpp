@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 
+#include <cctype>
 
 // load words: read file (user inputs file name) or make user to type new word (user inputs word manually)
 //      check if new words are already in the library, if new words are in library check their Hard-To-Remember-Rating (HRR, or Rating)
@@ -18,9 +19,9 @@
 
 // TYPES DEFINITIONS
 using RatingType = double;
-using RatingWordPair = std::pair< RatingType, std::string >;
-using WordRatingPair = std::pair< std::string, RatingType >;
+using WordType = std::string;
 
+// FREE FUNCTIONS
 // check if Rating is in range, if not move it to the closest boundary
 RatingType PutInBoundories( RatingType Rating )
 {
@@ -40,7 +41,7 @@ RatingType PutInBoundories( RatingType Rating )
     return Rating;
 }
 
-void ReadLibrary( std::vector< RatingWordPair >& output )
+void ReadLibrary( std::vector< RatingType >& ratings, std::vector< WordType >& words )
 {
     std::string const libraryFileName = "library.txt";
     std::ifstream libraryFileInput( libraryFileName );
@@ -53,44 +54,49 @@ void ReadLibrary( std::vector< RatingWordPair >& output )
 
     while( libraryFileInput && !libraryFileInput.eof() )
     {
-        output.emplace_back( std::pair( 0.0, "") );
-        
-        auto& rating = output.back().first;
+        ratings.emplace_back( 0.0 );
+        auto& rating = ratings.back();
         libraryFileInput >> rating;
-        rating = PutInBoundories( rating );        
+        rating = PutInBoundories( rating );
         if( !libraryFileInput.eof() && !libraryFileInput.good() )
         {
-            std::cout << "Error reading rating at line: " << output.size() << std::endl;
-            output.clear();
+            std::cout << "Error reading rating at line: " << ratings.size() << std::endl;
+            ratings.clear();
+            words.clear();
             return;
         }
+        
+        while( std::isspace( libraryFileInput.peek() ) && libraryFileInput.seekg( std::size_t( libraryFileInput.tellg() ) + 1 )  );
 
-        auto& word = output.back().second;
-        std::getline( libraryFileInput, word );
+        words.emplace_back( "" );
+        auto& word = words.back();
+        std::getline( libraryFileInput, word );            
         if( !libraryFileInput.eof() && !libraryFileInput.good() )
         {
-            std::cout << "Error reading word at line: " << output.size()  << std::endl;
-            output.clear();
+            std::cout << "Error reading word at line: " << words.size() << std::endl;
+            ratings.clear();
+            words.clear();
             return;
         }
+        while( word.size() && std::isspace( word.back() ) )
 
-        std::cout << "Read line #" << output.size() << ": " << rating << " " << word << std::endl;
+        std::cout << "Read line #" << ratings.size() << ": " << rating << " " << word << std::endl;
     }
-
-   
 }
 
 int main()
 {
-    std::vector< RatingWordPair > libraryRatingWord;
-    ReadLibrary( libraryRatingWord );
+    std::vector< RatingType > libraryRatings;
+    std::vector< WordType > libraryWords;
+    ReadLibrary( libraryRatings, libraryWords );
 
-    if( libraryRatingWord.empty() )
+    if( libraryRatings.empty() || libraryWords.empty() || ( libraryRatings.size() != libraryWords.size() ) )
     {
         std::cout << "Exiting app..." << std::endl;
         return 1;
     }
 
-    libraryRatingWord.clear();
+    libraryRatings.clear();
+    libraryWords.clear();
     return 0;
 }
