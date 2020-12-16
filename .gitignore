@@ -30,3 +30,17 @@
 *.exe
 *.out
 *.app
+
+# Other
+*.vcxproj
+*.filters
+*.user
+*.txt
+*.idb
+*.pdb
+*.recipe
+*.log
+*.tlog
+*.lastbuildstate
+Debug*
+LabConso*
