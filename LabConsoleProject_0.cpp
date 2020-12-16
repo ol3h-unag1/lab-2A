@@ -23,7 +23,7 @@ using WordType = std::string;
 
 // FREE FUNCTIONS
 // check if Rating is in range, if not move it to the closest boundary
-RatingType PutInBoundories( RatingType Rating )
+RatingType ClapRating( RatingType Rating )
 {
     RatingType const lowest = 0.0;
     RatingType const highest = 10.0;
@@ -57,7 +57,7 @@ void ReadLibrary( std::vector< RatingType >& ratings, std::vector< WordType >& w
         ratings.emplace_back( 0.0 );
         auto& rating = ratings.back();
         libraryFileInput >> rating;
-        rating = PutInBoundories( rating );
+        rating = ClapRating( rating );
         if( !libraryFileInput.eof() && !libraryFileInput.good() )
         {
             std::cout << "Error reading rating at line: " << ratings.size() << std::endl;
