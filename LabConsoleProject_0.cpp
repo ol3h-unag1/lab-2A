@@ -13,6 +13,8 @@
 
 #include <stdexcept>
 
+// refactor into object using menus and item (other menus objects) collections and choices as indexes of those collections
+
 // load words: read file (user inputs file name) or make user to type new word (user inputs word manually)
 //      check if new words are already in the library, if new words are in library check their Hard-To-Remember-Rating (HRR, or Rating)
 
@@ -23,6 +25,10 @@
 // TYPES DEFINITIONS
 using RatingType = double;
 using WordType = std::string;
+
+// GLOBAL VARIABLES
+std::vector< RatingType > libraryRatings;
+std::vector< WordType > libraryWords;
 
 // FREE FUNCTIONS
 // check if Rating is in range, if not move it to the closest boundary
@@ -90,9 +96,10 @@ void ReadLibrary( std::vector< RatingType >& ratings, std::vector< WordType >& w
 
 enum class E_MENU_ITEM
 {
-    INVALID = 1,
-    TRAIN = 0,
-    ADD = 1
+    INVALID = 0,
+    TRAIN = 1,
+    ADD = 2,
+    QUIT = 3
 };
 
 E_MENU_ITEM PromptUserInput()
@@ -104,7 +111,8 @@ E_MENU_ITEM PromptUserInput()
         {
             std::cout << "Hi! You wanna train memory or add new word(s)? Please enter a number to make a choice:" << std::endl;
             std::cout << "1 - for training\n"
-                "2 - for adding new word(s)" << std::endl;
+                "2 - for adding new word(s)\n"
+                "3 - for quit" << std::endl;
 
             std::string choice;
             std::getline( std::cin, choice );
@@ -112,9 +120,10 @@ E_MENU_ITEM PromptUserInput()
             if( choice.empty() ||
                 choice.size() > 1 ||
                 std::isdigit( choice[ 0 ] ) == false ||
-                std::stoi( choice ) < 0 ||
-                std::stoi( choice ) > 1 )
+                std::stoi( choice ) < 1 ||
+                std::stoi( choice ) > 3 )
             {
+                std::cout << "Wrong input. Check input tips or press Ctrl+Z to break quit the programm." << std::endl;
                 continue;
             }
 
@@ -134,10 +143,18 @@ E_MENU_ITEM PromptUserInput()
     return menuItem;
 }
 
+void TrainWords()
+{
+
+}
+
+void AddWords()
+{
+
+}
+
 int main()
 {
-    std::vector< RatingType > libraryRatings;
-    std::vector< WordType > libraryWords;
     ReadLibrary( libraryRatings, libraryWords );
 
     assert( ( "ratings and words collections have different sizes" ), libraryRatings.size() == libraryWords.size() );
@@ -147,9 +164,41 @@ int main()
         return 1;
     }
 
-    E_MENU_ITEM menuItem = PromptUserInput();         
+    auto choice = E_MENU_ITEM::INVALID;
+    while( choice != E_MENU_ITEM::QUIT )
+    {
+        choice = PromptUserInput();
+        if( choice == E_MENU_ITEM::QUIT )
+        {
+            continue;
+        }
+
+        switch( choice )
+        {
+
+        case E_MENU_ITEM::TRAIN:
+            TrainWords();
+            break;
+
+        case E_MENU_ITEM::ADD:
+            AddWords();
+            break;
+
+        case E_MENU_ITEM::QUIT:
+            continue; // exit on cycle condition check
+            break;
+
+        default:
+            continue;
+            break;
+        }
+
+    }
+
+    std::cout << "Quit the programm..." << std::endl;
 
     libraryRatings.clear();
     libraryWords.clear();
+
     return 0;
 }
