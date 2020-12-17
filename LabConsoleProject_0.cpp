@@ -13,7 +13,8 @@
 
 #include <stdexcept>
 
-// refactor into object using menus and item (other menus objects) collections and choices as indexes of those collections
+// TODO:
+// refactor into objects using menus and item (other menus objects) collections and choices as indexes of those collections
 
 // load words: read file (user inputs file name) or make user to type new word (user inputs word manually)
 //      check if new words are already in the library, if new words are in library check their Hard-To-Remember-Rating (HRR, or Rating)
@@ -25,10 +26,15 @@
 // TYPES DEFINITIONS
 using RatingType = double;
 using WordType = std::string;
+using WordRatingPair = std::pair< WordType, RatingType >;
 
 // GLOBAL VARIABLES
-std::vector< RatingType > libraryRatings;
-std::vector< WordType > libraryWords;
+std::string const libraryFileName = "library.txt";
+
+std::size_t const trainingSize = 15;
+
+std::map< WordType, RatingType > word2rating;
+
 
 // FREE FUNCTIONS
 // check if Rating is in range, if not move it to the closest boundary
@@ -50,9 +56,8 @@ RatingType ClapRating( RatingType Rating )
     return Rating;
 }
 
-void ReadLibrary( std::vector< RatingType >& ratings, std::vector< WordType >& words )
+void ReadLibrary()
 {
-    std::string const libraryFileName = "library.txt";
     std::ifstream libraryFileInput( libraryFileName );
     if( libraryFileInput.is_open() == false )
     {
@@ -63,34 +68,33 @@ void ReadLibrary( std::vector< RatingType >& ratings, std::vector< WordType >& w
 
     while( libraryFileInput && !libraryFileInput.eof() )
     {
-        ratings.emplace_back( 0.0 );
-        auto& rating = ratings.back();
+        RatingType rating;
         libraryFileInput >> rating;
         rating = ClapRating( rating );
         if( !libraryFileInput.eof() && !libraryFileInput.good() )
         {
-            std::cout << "Error reading rating at line: " << ratings.size() << std::endl;
-            ratings.clear();
-            words.clear();
+            std::cout << "Error reading rating at line: " << word2rating.size() << std::endl;
+            word2rating.clear();
             return;
         }
         
         while( std::isspace( libraryFileInput.peek() ) && libraryFileInput.seekg( std::size_t( libraryFileInput.tellg() ) + 1 )  );
 
-        words.emplace_back( "" );
-        auto& word = words.back();
+        WordType word;
         std::getline( libraryFileInput, word );            
         if( !libraryFileInput.eof() && !libraryFileInput.good() )
         {
-            std::cout << "Error reading word at line: " << words.size() << std::endl;
-            ratings.clear();
-            words.clear();
+            std::cout << "Error reading rating at line: " << word2rating.size() << std::endl;
+            word2rating.clear();
             return;
         }
 
-        while( word.size() && std::isspace( word.back() ) );
+        while( word.size() && std::isspace( word.back() ) )
+        {
+            word.pop_back();
+        }
 
-        //std::cout << "Read line #" << ratings.size() << ": " << rating << " " << word << std::endl;
+        word2rating[ word ] = rating;
     }
 }
 
@@ -145,7 +149,13 @@ E_MENU_ITEM PromptUserInput()
 
 void TrainWords()
 {
+    auto wrpLessRatingComparator = []( WordRatingPair const& left, WordRatingPair const& right )
+    {
+        return left.second < right.second;
+    };
 
+    std::vector< WordRatingPair > wordsByRating( word2rating.begin(), word2rating.end() );
+    std::sort( wordsByRating.begin(), wordsByRating.end(), wrpLessRatingComparator );
 }
 
 void AddWords()
@@ -155,12 +165,12 @@ void AddWords()
 
 int main()
 {
-    ReadLibrary( libraryRatings, libraryWords );
+    ReadLibrary();
 
     assert( ( "ratings and words collections have different sizes" ), libraryRatings.size() == libraryWords.size() );
-    if( libraryRatings.empty() || libraryWords.empty() || ( libraryRatings.size() != libraryWords.size() ) )
+    if( word2rating.empty() )
     {
-        std::cout << "Exiting app..." << std::endl;
+        std::cout << "Quit on error..." << std::endl;
         return 1;
     }
 
@@ -192,13 +202,11 @@ int main()
             continue;
             break;
         }
-
     }
 
-    std::cout << "Quit the programm..." << std::endl;
+    std::cout << "Quit on user choice..." << std::endl;
 
-    libraryRatings.clear();
-    libraryWords.clear();
+    word2rating.clear();
 
     return 0;
 }
