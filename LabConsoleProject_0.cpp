@@ -163,7 +163,7 @@ void AddWords()
 
 }
 
-int main()
+int init()
 {
     ReadLibrary();
 
