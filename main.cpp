@@ -1,8 +1,11 @@
 #include <iostream>
 
+#include "App.hpp"
 
 int main()
 {
-    std::cout << "New main's here! " << std::endl;
+    App app;
+    app.Start();
+
     return 0;
 }
