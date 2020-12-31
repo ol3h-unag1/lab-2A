@@ -21,8 +21,8 @@ private:
 private:
     std::unique_ptr< Dictionary > _dict{ std::make_unique< Dictionary >() };   
 
-    Menu _mainMenu;
-    Menu _trainingMenu;
-    Menu _addingMenu;
-    Menu _settingsMenu;
+    std::shared_ptr< Menu > _mainMenu;
+    std::shared_ptr< Menu > _trainingMenu;
+    std::shared_ptr< Menu > _addingMenu;
+    std::shared_ptr< Menu > _settingsMenu;
 };

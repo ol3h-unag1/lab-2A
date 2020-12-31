@@ -26,9 +26,11 @@ void App::Finish()
 
 bool App::Init()
 {
-    return _dict->Init();
+    bool inited = _dict->Init();
+    return inited;
 }
 
 void App::ShowMainMenu()
 {
+    _mainMenu->Show();
 }
