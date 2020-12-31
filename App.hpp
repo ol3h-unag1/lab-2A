@@ -1,9 +1,12 @@
 #pragma once
 
+#include <vector>
+
 #include <memory>
 #include <utility>
 
 #include "Dictionary.hpp"
+#include "Menu.hpp"
 
 class App
 {
@@ -13,8 +16,13 @@ public:
 
 private:
     bool Init();
-    void ShowFirstMenu();
+    void ShowMainMenu();
 
 private:
-    std::unique_ptr< Dictionary > _dict;
+    std::unique_ptr< Dictionary > _dict{ std::make_unique< Dictionary >() };   
+
+    Menu _mainMenu;
+    Menu _trainingMenu;
+    Menu _addingMenu;
+    Menu _settingsMenu;
 };

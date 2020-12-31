@@ -4,4 +4,6 @@
 
 class Dictionary
 {
+public:
+    bool Init();
 };

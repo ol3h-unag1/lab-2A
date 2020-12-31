@@ -1,19 +1,22 @@
 #pragma once
 
+#include <string>
+
+#include "ErrorMsg.hpp"
+
 #include "App.hpp"
 #include "Dictionary.hpp"
-
-
 
 void App::Start()
 {
     if( Init() )
     {
-        ShowFirstMenu();
+        ShowMainMenu();
     }
     else
     {
-        Finish();
+        Error( ERR_MSG( "Initialization failed" ) );
+        Finish();  
     }
 }
 
@@ -23,9 +26,9 @@ void App::Finish()
 
 bool App::Init()
 {
-    return false;
+    return _dict->Init();
 }
 
-void App::ShowFirstMenu()
+void App::ShowMainMenu()
 {
 }
