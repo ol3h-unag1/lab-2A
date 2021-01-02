@@ -26,7 +26,12 @@ void App::Finish()
 
 bool App::Init()
 {
-    bool inited = _dict->Init();
+    static bool inited = false;
+    if( !inited )
+    {
+        bool inited = _dict->Init();
+    }
+
     return inited;
 }
 

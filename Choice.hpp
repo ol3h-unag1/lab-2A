@@ -8,7 +8,7 @@ class Menu;
 class Choice
 {
 public:
-    explicit Choice( std::string title, std::shared_ptr< Menu > targetMenu );
+    explicit Choice( std::string title, std::shared_ptr< Menu > const targetMenu );
 
 public:
     std::string GetTitle() const { return _title; }
@@ -16,5 +16,5 @@ public:
 
 private:
     std::string _title;
-    std::shared_ptr< Menu > const _target;
+    std::weak_ptr< Menu > const _targetMenu;
 };

@@ -4,26 +4,26 @@
 
 #include "ErrorMsg.hpp"
 
-Choice::Choice( std::string title, std::shared_ptr< Menu > targetMenu )
+Choice::Choice( std::string title, std::shared_ptr< Menu > const targetMenu )
     : _title( title )
-    , _target( targetMenu )
+    , _targetMenu( targetMenu )
 {
     if( _title.empty() )
     {
         Error( ERR_MSG( "Empty title!" ) );
     }
 
-    if( !_target )
+    if( !_targetMenu.lock() )
     {
         Error( ERR_MSG( "No target menu!" ) );
     }
 }
 
 void Choice::Apply()
-{
-    if( _target )
+{ 
+    if( auto menu = _targetMenu.lock() )
     {
-        _target->Show();
+        menu->Show();
     }
     else
     {

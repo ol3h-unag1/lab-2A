@@ -8,9 +8,13 @@
 class Menu
 {
 public:
+    explicit Menu( std::string prompt );
+
+public:
     void Show();
+    void AddChoice( Choice choice ) { _choices.push_back( choice ); }
 
 private:
     std::string _prompt;
-    std::vector< std::unique_ptr< Choice > > _choices;
+    std::vector< Choice > _choices;
 };
