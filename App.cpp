@@ -15,7 +15,7 @@ void App::Start()
     }
     else
     {
-        Error( ERR_MSG( "Initialization failed" ) );
+        PRNT_ERR( "Initialization failed" ) ;
         Finish();  
     }
 }

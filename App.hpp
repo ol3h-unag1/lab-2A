@@ -26,10 +26,10 @@ private:
     std::shared_ptr< Menu > _trainingMenu;
 
     std::shared_ptr< Menu > _addingWordMainMenu;
-    std::shared_ptr< Menu > _addingWordFromFileMenu;
     std::shared_ptr< Menu > _addingWordManualMenu;
+    std::shared_ptr< Menu > _addingWordFromFileMenu;
+
 
     std::shared_ptr< Menu > _settingsMainMenu;
-    std::shared_ptr< Menu > _settingsSetIntervalMenu;
     std::shared_ptr< Menu > _settingsSetAmountOfTrainingMenu;
 };
