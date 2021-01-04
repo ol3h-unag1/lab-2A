@@ -10,6 +10,27 @@
 #include "App.hpp"
 #include "Dictionary.hpp"
 
+enum class MAIN_MENU_CHOICES : std::size_t
+{
+    EXE = 1,
+    SETT = 2,
+    ADDW = 3
+};
+
+enum class SETTINGS_MENU_CHOICES : std::size_t
+{
+    EXE_SIZE = 1,
+    MAIN = 2
+};
+
+
+enum class ADDW_MENU_CHOICES : std::size_t
+{
+    MAN = 1,
+    FILE = 2,
+    MAIN = 3
+};
+
 void App::Start()
 {
     if( Init() )
@@ -40,6 +61,7 @@ bool App::Init()
     _notificationMenu->SetOnEnterHandler( notificationMenuOnEnterHandler );
 
     _mainMenu = std::make_shared< Menu >( "Make you choice:\n\t1. Exercise\n\t2. Add word( s )\n\t3. Settings" );
+    _pendingMenu = _mainMenu;
     auto mainMenuInputHandler = [this]() 
     {
         std::size_t choice = 0;
@@ -61,12 +83,14 @@ bool App::Init()
             _notificationMenu->Show();
             return;
         }
+
+
     };
     _mainMenu->SetInputHandler( mainMenuInputHandler );
 
     _trainingMenu = std::make_shared< Menu >( "Try to remember translation. Enter a number between 0 and 10 indicating how hard ( or easy ) it was to remember it.\n0 - very easy, 10 - can't remember." );
 
-    inited = _mainMenu && _notificationMenu && _trainingMenu && _dict->Init();
+    inited = _notificationMenu &&_mainMenu && _trainingMenu && _dict->Init();
 
     return inited;
 }

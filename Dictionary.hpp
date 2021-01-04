@@ -2,6 +2,8 @@
 
 #include <vector>
 
+#include "Word.hpp"
+
 class Dictionary
 {
 public:
@@ -15,4 +17,6 @@ private:
 
 private:
     std::size_t exerciseSize = 15;
+
+    std::vector< Word > _words;
 };
