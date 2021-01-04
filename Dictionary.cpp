@@ -1,13 +1,11 @@
 #include <vector>
 #include <string>
-#include <chrono>
-#include <thread>
 
 #include "Dictionary.hpp"
+
 #include "ErrorMsg.hpp"
 
 std::vector< std::string > testWordsSource
-
 {
     "vrmeeynvezvzkxfjdsyq",
     "nirsankdhsazijoirety",
@@ -528,6 +526,24 @@ bool Dictionary::Init()
     return ReadLibrary();
 }
 
+std::size_t Dictionary::GetExercizeSize() const
+{
+    return std::min( _portionSize, _words.size() );
+}
+
+std::vector< Word* > Dictionary::GetExersizePortion()
+{
+    static std::size_t totalIndex = 0;
+   
+    std::vector< Word* > portion;
+    for( std::size_t i = 0; totalIndex < _words.size() && i < _portionSize; ++i, ++totalIndex )
+    {
+        portion.push_back( std::addressof( _words[ totalIndex ] ) );
+    }
+
+    return portion;
+}
+
 bool Dictionary::ReadLibrary()
 {
     _words.reserve( testWordsSource.size() );
@@ -536,10 +552,6 @@ bool Dictionary::ReadLibrary()
         testWordsSource[ i ] = std::to_string( i ) + testWordsSource[ i ];
         _words.emplace_back( Word( testWordsSource[ i ], static_cast< double >( i % 10 ) ) );
     }
-
-    PRNT_ERR( std::to_string( _words.size() ) + std::string( " words was read" ) );
-    using namespace std::chrono_literals;
-    std::this_thread::sleep_for( 5s );
 
     return true;
 }
