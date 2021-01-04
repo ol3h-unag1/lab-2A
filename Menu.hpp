@@ -2,11 +2,23 @@
 
 #include <vector>
 #include <string>
+#include <functional>
 
 #include "Choice.hpp"
 
 class Menu
 {
 public:
+    explicit Menu( std::function< std::string( void ) > description );
+    explicit Menu( std::string descriptionMsg );
+
+public:
     void Show();
+
+    void SetOnEnterHandler( std::function< void( void ) > handler );
+
+private:
+    std::function< std::string( void ) > _description;
+    
+    std::function< void( void ) > _onEnter;
 };

@@ -5,6 +5,5 @@
 
 class Choice
 {
-public:
-    void Apply( std::string msg = "");
+
 };

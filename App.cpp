@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <chrono>
+#include <thread>
 
 #include "ErrorMsg.hpp"
 
@@ -11,31 +13,37 @@ void App::Start()
 {
     if( Init() )
     {
-        ShowMainMenu();
+        _notificationMenu->Show();
     }
     else
     {
         PRNT_ERR( "Initialization failed" ) ;
-        Finish();  
     }
-}
-
-void App::Finish()
-{
 }
 
 bool App::Init()
 {
     static bool inited = false;
-    if( !inited )
+    if( inited )
     {
-        bool inited = _dict->Init();
+        return true;
     }
+    
+    _mainMenu = std::make_shared< Menu >( "Make you choice:\n\t1. Exercise\n\t2. Add word( s )\n\t3. Settings" );   
+
+    _notificationMenu = std::make_shared< Menu >( "Welcome to LEngX - app for memorizing English words!" );
+    auto notificationMenuOnEnterHandler = [ this ]() 
+    {
+        using namespace std::chrono_literals;
+        std::this_thread::sleep_for( 2s );
+        _mainMenu->Show();
+    };
+    _notificationMenu->SetOnEnterHandler( notificationMenuOnEnterHandler );
+
+    //_trainingMenu = std::make_shared< Menu >
+
+    inited = _mainMenu && _notificationMenu && _trainingMenu;
+    //inited = _dict->Init();
 
     return inited;
-}
-
-void App::ShowMainMenu()
-{
-    _mainMenu->Show();
 }
