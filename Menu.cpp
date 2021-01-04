@@ -19,6 +19,11 @@ void Menu::Show()
     {
         _onEnter();
     }
+
+    if( _input )
+    {
+        _input();
+    }
 }
 
 void Menu::SetDescription( std::string descriptionMsg )
@@ -29,4 +34,9 @@ void Menu::SetDescription( std::string descriptionMsg )
 void Menu::SetOnEnterHandler( std::function<void( void )> handler )
 {
     _onEnter = handler;
+}
+
+void Menu::SetInputHandler( std::function< void( void ) > handler )
+{
+    _input = handler;
 }

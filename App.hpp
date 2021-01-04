@@ -19,9 +19,11 @@ private:
 private:
     std::unique_ptr< Dictionary > _dict{ std::make_unique< Dictionary >() };   
 
-    std::shared_ptr< Menu > _mainMenu;
+    std::shared_ptr< Menu > _pendingMenu; // activated after notification transition
 
     std::shared_ptr< Menu > _notificationMenu;
-
+    std::shared_ptr< Menu > _mainMenu;
     std::shared_ptr< Menu > _trainingMenu;
+    std::shared_ptr< Menu > _settingsMenu;
+    std::shared_ptr< Menu > _addWordMenu;
 };
