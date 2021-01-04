@@ -3,8 +3,15 @@
 #include <string>
 
 class Word
-{  
+{ 
+public:
     explicit Word( std::string str, double rating );
+
+public:
+    std::string GetStr() const { return _str; }
+    double GetRating() const { return _rating; }
+    
+    void AdjustRating( double userScore );
 
 private: 
     std::string const _str;

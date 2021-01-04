@@ -40,10 +40,10 @@ bool App::Init()
     };
     _notificationMenu->SetOnEnterHandler( notificationMenuOnEnterHandler );
 
-    //_trainingMenu = std::make_shared< Menu >
 
-    inited = _mainMenu && _notificationMenu && _trainingMenu;
-    //inited = _dict->Init();
+    _trainingMenu = std::make_shared< Menu >( "Try to remember translation. Enter a number between 0 and 10 indicating how hard ( or easy ) it was to remember it.\n0 - very easy, 10 - can't remember." );
+
+    inited = _mainMenu && _notificationMenu && _trainingMenu && _dict->Init();
 
     return inited;
 }
