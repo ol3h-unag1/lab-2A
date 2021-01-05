@@ -230,7 +230,42 @@ bool App::Init()
         else
         {
             std::cout << consoleOutputCache.str();
-            for( std::size_t i = cacheIndex; i < exercizePortionCache.size(); ++i, ++cacheIndex )
+            std::vector< Word* > exercizePortion = exercizePortionCache;
+
+            for( std::size_t i = 0; i < exercizePortion.size(); ++i, ++cacheIndex )
+            {
+                std::string prompt = "Try to remember a <" + std::to_string( i ) + "> word/phrase: " + exercizePortion[ i ]->GetStr() + " ";
+                consoleOutputCache << prompt;
+                std::cout << prompt;
+
+                std::size_t userRating = 0u;
+                if( ReadNumber( userRating, minRating, maxRating ) )
+                {
+                    exercizePortion[ i ]->AdjustRating( userRating );
+                    consoleOutputCache << userRating << std::endl;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if( cacheIndex >= exercizePortion.size() ) // finished exercize
+            {
+                _pendingMenu = _mainMenu;
+                _notificationMenu->SetDescription( "You've trained " + std::to_string( exercizePortion.size() ) + " word(s)/phrase(s)!" );
+                _notificationMenu->Show();
+
+                cacheIndex = 0u;
+            }
+            else // wrong rating: show notification menu and come back here to continue from where it was "paused"
+            {
+                _pendingMenu = _trainingMenu;
+                _notificationMenu->SetDescription( "Enter number between" + std::to_string( minRating ) + " and " + std::to_string( maxRating ) );
+                _notificationMenu->Show();
+                return;
+            }
+
         }
         
     };
