@@ -8,9 +8,7 @@ class Dictionary
 {
 public:
     bool Init();
-
-    std::size_t GetExercizeSize() const;
-    std::size_t SetExercizeSize( std::size_t size ) { _portionSize = size; }
+    std::size_t SetExercizePortionSize( std::size_t size ) { _portionSize = size; }
 
     std::vector< Word* > GetExersizePortion();
 

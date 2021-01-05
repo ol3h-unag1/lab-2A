@@ -526,11 +526,6 @@ bool Dictionary::Init()
     return ReadLibrary();
 }
 
-std::size_t Dictionary::GetExercizeSize() const
-{
-    return std::min( _portionSize, _words.size() );
-}
-
 std::vector< Word* > Dictionary::GetExersizePortion()
 {
     static std::size_t totalIndex = 0;
@@ -539,6 +534,11 @@ std::vector< Word* > Dictionary::GetExersizePortion()
     for( std::size_t i = 0; totalIndex < _words.size() && i < _portionSize; ++i, ++totalIndex )
     {
         portion.push_back( std::addressof( _words[ totalIndex ] ) );
+    }
+
+    if( totalIndex >= _words.size() )
+    {
+        totalIndex = 0;
     }
 
     return portion;
