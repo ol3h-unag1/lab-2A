@@ -11,7 +11,7 @@ public:
     std::string GetStr() const { return _str; }
     double GetRating() const { return _rating; }
     
-    void AdjustRating( double userScore );
+    void AdjustRating( std::size_t userScore );
 
 private: 
     std::string const _str;

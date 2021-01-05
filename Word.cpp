@@ -5,7 +5,7 @@ Word::Word( std::string str, double rating )
     , _rating( rating )
 {}
 
-void Word::AdjustRating( double userScore )
+void Word::AdjustRating( std::size_t userScore )
 {
     _rating = ( _rating + userScore ) / 5;
 }
