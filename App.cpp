@@ -187,85 +187,52 @@ bool App::Init()
         static std::vector< Word* > exercizePortionCache;
         static std::size_t cacheIndex = 0;
 
-        if( cacheIndex == 0 )
+        std::vector< Word* > exercizePortion;
+        if( cacheIndex == 0 ) // new exercize
         {
-            consoleOutputCache = std::stringstream(); // clear cache stream
-            std::vector< Word* > exercizePortion = _dict->GetExersizePortion();
+            consoleOutputCache = std::stringstream();
+            exercizePortion = _dict->GetExersizePortion();
             exercizePortionCache = exercizePortion;
+        }
+        else // continue exercize after showing input error notification
+        {
+            exercizePortion = exercizePortionCache;
+            std::cout << consoleOutputCache.str();
+        }
 
-            for( std::size_t i = 0; i < exercizePortion.size(); ++i, ++cacheIndex )
+        for( std::size_t i = 0; i < exercizePortion.size(); ++i, ++cacheIndex )
+        {
+            std::string prompt = "Try to remember a <" + std::to_string( i ) + "> word/phrase: " + exercizePortion[ i ]->GetStr() + " ";
+            consoleOutputCache << prompt;
+            std::cout << prompt;
+
+            std::size_t userRating = 0u;
+            if( ReadNumber( userRating, minRating, maxRating ) )
             {
-                std::string prompt = "Try to remember a <" + std::to_string(i) + "> word/phrase: " + exercizePortion[ i ]->GetStr() + " ";
-                consoleOutputCache << prompt;
-                std::cout << prompt;
-                
-                std::size_t userRating = 0u;
-                if( ReadNumber( userRating, minRating, maxRating ) )
-                {
-                    exercizePortion[ i ]->AdjustRating( userRating );
-                    consoleOutputCache << userRating << std::endl;
-                }
-                else
-                {
-                    break;
-                }
+                exercizePortion[ i ]->AdjustRating( userRating );
+                consoleOutputCache << userRating << std::endl;
             }
-
-            if( cacheIndex >= exercizePortion.size() ) // finished exercize
+            else
             {
-                _pendingMenu = _mainMenu;
-                _notificationMenu->SetDescription( "You've trained " + std::to_string( exercizePortion.size() ) + " word(s)/phrase(s)!" );
-                _notificationMenu->Show();
-
-                cacheIndex = 0u;
-            }
-            else // wrong rating: show notification menu and come back here to continue from where it was "paused"
-            {
-                _pendingMenu = _trainingMenu;
-                _notificationMenu->SetDescription( "Enter number between" + std::to_string( minRating ) + " and " + std::to_string( maxRating ) );
-                _notificationMenu->Show();
-                return;
+                break;
             }
         }
-        else
+
+        if( cacheIndex >= exercizePortion.size() ) // finished exercize
         {
-            std::cout << consoleOutputCache.str();
-            std::vector< Word* > exercizePortion = exercizePortionCache;
+            cacheIndex = 0u;
+            consoleOutputCache = std::stringstream(); // clear cache stream
 
-            for( std::size_t i = 0; i < exercizePortion.size(); ++i, ++cacheIndex )
-            {
-                std::string prompt = "Try to remember a <" + std::to_string( i ) + "> word/phrase: " + exercizePortion[ i ]->GetStr() + " ";
-                consoleOutputCache << prompt;
-                std::cout << prompt;
-
-                std::size_t userRating = 0u;
-                if( ReadNumber( userRating, minRating, maxRating ) )
-                {
-                    exercizePortion[ i ]->AdjustRating( userRating );
-                    consoleOutputCache << userRating << std::endl;
-                }
-                else
-                {
-                    break;
-                }
-            }
-
-            if( cacheIndex >= exercizePortion.size() ) // finished exercize
-            {
-                _pendingMenu = _mainMenu;
-                _notificationMenu->SetDescription( "You've trained " + std::to_string( exercizePortion.size() ) + " word(s)/phrase(s)!" );
-                _notificationMenu->Show();
-
-                cacheIndex = 0u;
-            }
-            else // wrong rating: show notification menu and come back here to continue from where it was "paused"
-            {
-                _pendingMenu = _trainingMenu;
-                _notificationMenu->SetDescription( "Enter number between" + std::to_string( minRating ) + " and " + std::to_string( maxRating ) );
-                _notificationMenu->Show();
-                return;
-            }
-
+            _pendingMenu = _mainMenu;
+            _notificationMenu->SetDescription( "You've trained " + std::to_string( exercizePortion.size() ) + " word(s)/phrase(s)!" );
+            _notificationMenu->Show();
+        }
+        else // wrong rating: show notification menu and come back here to continue from where it was "paused"
+        {
+            _pendingMenu = _trainingMenu;
+            _notificationMenu->SetDescription( "Enter number between" + std::to_string( minRating ) + " and " + std::to_string( maxRating ) );
+            _notificationMenu->Show();
+            return;
         }
         
     };
