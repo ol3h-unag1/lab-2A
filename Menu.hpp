@@ -4,8 +4,6 @@
 #include <string>
 #include <functional>
 
-#include "Choice.hpp"
-
 class Menu
 {
 public:

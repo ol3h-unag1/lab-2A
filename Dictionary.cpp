@@ -531,7 +531,7 @@ std::vector< Word* > Dictionary::GetExersizePortion()
     static std::size_t totalIndex = 0;
    
     std::vector< Word* > portion;
-    for( std::size_t i = 0; totalIndex < _words.size() && i < _portionSize; ++i, ++totalIndex )
+    for( std::size_t i = 0; ( i < _portionSize ) && ( totalIndex < _words.size() ); ++i, ++totalIndex )
     {
         portion.push_back( std::addressof( _words[ totalIndex ] ) );
     }

@@ -80,7 +80,7 @@ Enum EMax()
 
 void ClearStdCin()
 {
-    std::cin.ignore( std::numeric_limits< std::streamsize >::max() );
+    std::cin.ignore( std::numeric_limits< std::streamsize >::max(), '\n' );
     std::cin.clear();
 }
 
@@ -128,7 +128,7 @@ bool App::Init()
     auto notificationMenuOnEnterHandler = [this]()
     {
         using namespace std::chrono_literals;
-        std::this_thread::sleep_for( 2s );
+        //std::this_thread::sleep_for( 1s );
         _pendingMenu->Show();
     };
     _notificationMenu->SetOnEnterHandler( notificationMenuOnEnterHandler );
@@ -146,7 +146,7 @@ bool App::Init()
         if( ReadNumber( choice, minChoice, maxChoice ) == false)
         {
             _pendingMenu = _mainMenu;
-            _notificationMenu->SetDescription( "Enter number between" + std::to_string( minChoice ) + " and " + std::to_string( maxChoice ) );
+            _notificationMenu->SetDescription( "Enter number between " + std::to_string( minChoice ) + " and " + std::to_string( maxChoice ) );
             _notificationMenu->Show();
             return;
         }
@@ -186,9 +186,11 @@ bool App::Init()
         static std::stringstream consoleOutputCache;        
         static std::vector< Word* > exercizePortionCache;
         static std::size_t cacheIndex = 0;
+        static bool newExercize = true;
 
         std::vector< Word* > exercizePortion;
-        if( cacheIndex == 0 ) // new exercize
+        std::size_t index = 0;
+        if( newExercize ) // new exercize
         {
             consoleOutputCache = std::stringstream();
             exercizePortion = _dict->GetExersizePortion();
@@ -198,30 +200,38 @@ bool App::Init()
         {
             exercizePortion = exercizePortionCache;
             std::cout << consoleOutputCache.str();
+            index = cacheIndex;
         }
 
-        for( std::size_t i = 0; i < exercizePortion.size(); ++i, ++cacheIndex )
+        bool firstIterationAfterError = !newExercize;
+        for( ; index < exercizePortion.size(); ++index, ++cacheIndex )
         {
-            std::string prompt = "Try to remember a <" + std::to_string( i ) + "> word/phrase: " + exercizePortion[ i ]->GetStr() + " ";
-            consoleOutputCache << prompt;
-            std::cout << prompt;
+            std::string const prompt = "Try to remember a <" + std::to_string( index ) + "> word/phrase: " + exercizePortion[ index ]->GetStr() + " ";
+
+            if( firstIterationAfterError != true )
+            {
+                consoleOutputCache << prompt;
+                std::cout << prompt;
+            }
+            firstIterationAfterError = false;
 
             std::size_t userRating = 0u;
             if( ReadNumber( userRating, minRating, maxRating ) )
             {
-                exercizePortion[ i ]->AdjustRating( userRating );
+                exercizePortion[ index ]->AdjustRating( userRating );
                 consoleOutputCache << userRating << std::endl;
             }
             else
             {
+                newExercize = false;
                 break;
             }
         }
 
-        if( cacheIndex >= exercizePortion.size() ) // finished exercize
+        if( index >= exercizePortion.size() ) // finished exercize
         {
             cacheIndex = 0u;
-            consoleOutputCache = std::stringstream(); // clear cache stream
+            newExercize = true;
 
             _pendingMenu = _mainMenu;
             _notificationMenu->SetDescription( "You've trained " + std::to_string( exercizePortion.size() ) + " word(s)/phrase(s)!" );
@@ -230,7 +240,7 @@ bool App::Init()
         else // wrong rating: show notification menu and come back here to continue from where it was "paused"
         {
             _pendingMenu = _trainingMenu;
-            _notificationMenu->SetDescription( "Enter number between" + std::to_string( minRating ) + " and " + std::to_string( maxRating ) );
+            _notificationMenu->SetDescription( "Enter number between " + std::to_string( minRating ) + " and " + std::to_string( maxRating ) );
             _notificationMenu->Show();
             return;
         }
