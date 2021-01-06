@@ -18,8 +18,11 @@
 
 #include "App.hpp"
 #include "Dictionary.hpp"
+#include "Menu.hpp"
 
 
+
+App* App::s_application = nullptr;
 
 enum class MAIN_MENU_CHOICES : std::size_t
 {
@@ -115,6 +118,14 @@ void App::Start()
     }
 }
 
+void App::UpdateLibrary()
+{
+    if( s_application )
+    {
+        s_application->_dict->UpdateLibrary();
+    }
+}
+
 bool App::Init()
 {
     static bool inited = false;
@@ -122,6 +133,10 @@ bool App::Init()
     {
         return true;
     }
+
+    s_application = this;
+
+    _dict = std::make_shared< Dictionary >();
 
     /////////////////////////////
     _notificationMenu = std::make_shared< Menu >( "Welcome to LEngX - app for memorizing English words!" ); // description used on app start

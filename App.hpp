@@ -5,19 +5,24 @@
 #include <memory>
 #include <utility>
 
-#include "Dictionary.hpp"
-#include "Menu.hpp"
+class Dictionary;
+class Menu;
 
 class App
 {
 public:
     void Start();
 
+public:
+    static void UpdateLibrary();
+
 private:
     bool Init();
 
 private:
-    std::unique_ptr< Dictionary > _dict{ std::make_unique< Dictionary >() };   
+    static App* s_application;
+
+    std::shared_ptr< Dictionary > _dict;
 
     std::shared_ptr< Menu > _pendingMenu; // activated after notification transition
 
