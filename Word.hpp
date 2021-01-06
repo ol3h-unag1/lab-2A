@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <memory>
+
+class Dictionary;
 
 class Word
 { 
@@ -13,7 +16,7 @@ public:
     
     void AdjustRating( std::size_t userScore );
 
-private: 
+private:   
     std::string const _str;
     double _rating;
 };

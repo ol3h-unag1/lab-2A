@@ -1,8 +1,10 @@
+#include <fstream>
+
 #include <vector>
 #include <string>
 
-#include "Dictionary.hpp"
 
+#include "Dictionary.hpp"
 #include "ErrorMsg.hpp"
 
 std::vector< std::string > testWordsSource
@@ -539,19 +541,85 @@ std::vector< Word* > Dictionary::GetExersizePortion()
     if( totalIndex >= _words.size() )
     {
         totalIndex = 0;
+        _words.clear();
+        ReadLibrary();
+        return GetExersizePortion();
     }
 
     return portion;
 }
 
+double ClapRating( double rating )
+{
+    double const lowest = 0.0;
+    double const highest = 10.0;
+
+    if( rating < lowest )
+    {
+        return lowest;
+    }
+
+    if( rating > highest )
+    {
+        return highest;
+    }
+
+    return rating;
+}
+
 bool Dictionary::ReadLibrary()
 {
-    _words.reserve( testWordsSource.size() );
-    for( std::size_t i = 0; i < testWordsSource.size(); ++i )
+    static std::string const libraryFileName = "library.txt";
+    std::ifstream libraryFileInput( libraryFileName );
+    if( libraryFileInput.is_open() == false )
     {
-        testWordsSource[ i ] = std::to_string( i ) + testWordsSource[ i ];
-        _words.emplace_back( Word( testWordsSource[ i ], static_cast< double >( i % 10 ) ) );
+        std::cout << "CAN'T OPEN LIBRARY FILE: " << libraryFileName << std::endl;
+        return false;
+    }
+    //std::cout << "READING LIBRARY FILE: " << libraryFileName << std::endl;
+
+    while( libraryFileInput && !libraryFileInput.eof() )
+    {
+        double rating;
+        libraryFileInput >> rating;
+        rating = ClapRating( rating );
+        if( !libraryFileInput.eof() && !libraryFileInput.good() )
+        {
+            PRNT_ERR( "Error reading rating at line: " + std::to_string( _words.size() ) );
+            _words.clear();
+            return false;
+        }
+
+        while( std::isspace( libraryFileInput.peek() ) && libraryFileInput.seekg( std::size_t( libraryFileInput.tellg() ) + 1 ) );
+
+        std::string wordStr;
+        std::getline( libraryFileInput, wordStr );
+        if( !libraryFileInput.eof() && !libraryFileInput.good() )
+        {
+            PRNT_ERR( "Error reading word string at line: " + std::to_string( _words.size() ) );
+            _words.clear();
+            return false;
+        }
+
+        while( wordStr.size() && std::isspace( wordStr.back() ) )
+        {
+            wordStr.pop_back();
+        }
+
+        _words.emplace_back( Word{ wordStr, rating } );
     }
 
     return true;
 }
+
+//bool Dictionary::ReadLibraryTest()
+//{
+//    _words.reserve( testWordsSource.size() );
+//    for( std::size_t i = 0; i < testWordsSource.size(); ++i )
+//    {
+//        testWordsSource[ i ] = std::to_string( i ) + testWordsSource[ i ];
+//        _words.emplace_back( Word( testWordsSource[ i ], static_cast< double >( i % 10 ) ) );
+//    }
+//
+//    return true;
+//}

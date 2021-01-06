@@ -24,11 +24,11 @@
 enum class MAIN_MENU_CHOICES : std::size_t
 {
     EXE = 1,
-    SETT = 2,
-    ADDW = 3,
+    ADDW = 2,
+    SETT = 3,
 
     MIN = EXE,
-    MAX = ADDW
+    MAX = SETT
 };
 
 enum class SETTINGS_MENU_CHOICES : std::size_t
@@ -128,7 +128,7 @@ bool App::Init()
     auto notificationMenuOnEnterHandler = [this]()
     {
         using namespace std::chrono_literals;
-        //std::this_thread::sleep_for( 1s );
+        std::this_thread::sleep_for( 1s );
         _pendingMenu->Show();
     };
     _notificationMenu->SetOnEnterHandler( notificationMenuOnEnterHandler );
@@ -250,9 +250,17 @@ bool App::Init()
     
     /////////////////////////////
     _settingsMenu = std::make_shared< Menu >( "SETTINGS MENU WIP" );
-
-    /////////////////////////////
+    auto wipStub = [this]()
+    {
+        using namespace std::chrono_literals;
+        std::this_thread::sleep_for( 1s );
+        _mainMenu->Show();
+    };
+    _settingsMenu->SetOnEnterHandler( wipStub );
+    
+    /////////////////////////////   
     _addWordMenu = std::make_shared< Menu >( "ADD MENU WIP" );
+    _addWordMenu->SetOnEnterHandler( wipStub );
 
     /////////////////////////////
     bool const menusInited = _pendingMenu && _notificationMenu && _mainMenu && _trainingMenu && _settingsMenu && _addWordMenu;

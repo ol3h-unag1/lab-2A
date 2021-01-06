@@ -1,5 +1,7 @@
 #include "Word.hpp"
 
+#include "Dictionary.hpp"
+
 Word::Word( std::string str, double rating )
     : _str( str )
     , _rating( rating )
