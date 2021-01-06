@@ -5,6 +5,7 @@
 #include <filesystem>
 
 #include <chrono>
+#include <ctime>
 
 #include "Dictionary.hpp"
 #include "ErrorMsg.hpp"
@@ -554,12 +555,7 @@ std::vector< Word* > Dictionary::GetExersizePortion()
 std::string GetUniqueStamp() 
 {
     static std::size_t counter = 0u;
-
-    std::time_t now = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
-    std::string timeStr( 30, '\0' );
-    std::strftime( &timeStr[ 0 ], timeStr.size(), "%Y%m%d%H%M%S", std::localtime( &now ) );
-
-
+    std::string timeStr;
     return timeStr + "_" + std::to_string(++counter);
 }
 
