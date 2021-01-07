@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <memory>
 
@@ -17,6 +18,10 @@ public:
     void AdjustRating( std::size_t userScore );
 
 private:   
-    std::string const _str;
+    std::string _str;
     double _rating;
 };
+
+std::ostream& operator<<( std::ostream& os, Word const& w );
+
+bool operator<( Word const& left, Word const& right );

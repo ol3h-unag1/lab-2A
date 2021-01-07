@@ -221,7 +221,7 @@ bool App::Init()
         bool firstIterationAfterError = !newExercize;
         for( ; index < exercizePortion.size(); ++index, ++cacheIndex )
         {
-            std::string const prompt = "Try to remember a <" + std::to_string( index ) + "> word/phrase: " + exercizePortion[ index ]->GetStr() + " ";
+            std::string const prompt = "Try to remember a <" + std::to_string( index + 1 ) + "> word/phrase: " + exercizePortion[ index ]->GetStr() + " ";
 
             if( firstIterationAfterError != true )
             {

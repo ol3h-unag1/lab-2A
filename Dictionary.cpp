@@ -555,16 +555,31 @@ std::vector< Word* > Dictionary::GetExersizePortion()
 std::string GetUniqueStamp() 
 {
     static std::size_t counter = 0u;
-    std::string timeStr;
-    return timeStr + "_" + std::to_string(++counter);
-}
 
+    std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+    auto duration = now.time_since_epoch();
+    auto seconds = std::chrono::duration_cast< std::chrono::seconds >( duration ).count();
+    return std::to_string( seconds ) + "_" + std::to_string(++counter);
+}
 
 void Dictionary::UpdateLibrary()
 {
-    auto p = std::filesystem::current_path();
-    std::cout << p.string() << std::endl;
-    std::filesystem::rename( p / "library.txt", p / ( GetUniqueStamp() + ".txt" ) );
+    if( _words.empty() )
+    {
+        PRNT_ERR( "Can't update library: no words to write!" );
+        return;
+    }
+
+    auto const p = std::filesystem::current_path();
+    std::filesystem::rename( p / libraryFileName, p / ( GetUniqueStamp() + libraryFileName ) );
+
+    std::ofstream ofs{ libraryFileName };
+    for( std::size_t i = 0; i < _words.size() - 1; ++i )
+    {
+        ofs << _words[ i ] << std::endl;
+    }
+    
+    ofs << _words.back();
 }
 
 double ClapRating( double rating )
@@ -587,7 +602,7 @@ double ClapRating( double rating )
 
 bool Dictionary::ReadLibrary()
 {
-    std::ifstream libraryFileInput( libraryFileName );
+    std::ifstream libraryFileInput{ libraryFileName };
     if( libraryFileInput.is_open() == false )
     {
         PRNT_ERR( "CAN'T OPEN LIBRARY FILE: " + libraryFileName );
@@ -625,6 +640,7 @@ bool Dictionary::ReadLibrary()
         _words.emplace_back( Word{ wordStr, rating } );
     }
 
+    std::sort( std::begin( _words ), std::end( _words ) );
     return true;
 }
 
