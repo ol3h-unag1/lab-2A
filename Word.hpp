@@ -23,5 +23,3 @@ private:
 };
 
 std::ostream& operator<<( std::ostream& os, Word const& w );
-
-bool operator<( Word const& left, Word const& right );

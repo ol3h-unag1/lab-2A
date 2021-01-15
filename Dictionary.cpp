@@ -2,7 +2,10 @@
 
 #include <vector>
 #include <string>
+
 #include <filesystem>
+
+#include <limits>
 
 #include <chrono>
 #include <ctime>
@@ -600,6 +603,22 @@ double ClapRating( double rating )
     return rating;
 }
 
+bool AreSame( double a, double b )
+{
+    return std::fabs( a - b ) < std::numeric_limits<double>::epsilon();
+}
+
+bool SortWordsByRatingThenAlpha( Word const& left, Word const& right )
+{
+    if( AreSame( left.GetRating(), right.GetRating() ) )
+    {
+        return left.GetStr() < right.GetStr();
+    }
+
+    return left.GetRating() > right.GetRating();
+}
+
+
 bool Dictionary::ReadLibrary()
 {
     std::ifstream libraryFileInput{ libraryFileName };
@@ -640,7 +659,14 @@ bool Dictionary::ReadLibrary()
         _words.emplace_back( Word{ wordStr, rating } );
     }
 
-    std::sort( std::begin( _words ), std::end( _words ) );
+    std::sort( std::begin( _words ), std::end( _words ), SortWordsByRatingThenAlpha );
+
+    //std::cout << "Library: " << std::endl;
+    //for( auto& w : _words )
+    //{
+    //    std::cout << w << std::endl;
+    //}
+
     return true;
 }
 
