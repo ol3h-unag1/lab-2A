@@ -44,3 +44,5 @@
 *.lastbuildstate
 Debug*
 LabConso*
+*.sqlite
+*.json
