@@ -11,6 +11,12 @@ class Menu;
 class App
 {
 public:
+   ~App()
+   {
+      s_application = nullptr;
+   }
+
+public:
     void Start();
 
 public:
